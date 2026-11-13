@@ -1,6 +1,6 @@
 {
   "name": "@frg2089/gb-t_2260",
-  "version": "0.2025.1",
+  "version": "0.2025.2",
   "description": "县及县以上行政区划代码（GB/T 2260）",
   "keywords": [
     "administrative-divisions",
@@ -31,8 +31,8 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "fmt": "oxfmt",
-    "build": "node ./src/index.ts"
+    "build": "node ./src/index.ts",
+    "fmt": "oxfmt"
   },
   "devDependencies": {
     "@types/jsdom": "^30.0.0",

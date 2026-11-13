@@ -24,16 +24,7 @@ interface BasicItem {
   /**
    * @description 行政区划年份范围
    */
-  year: {
-    /**
-     * @description 行政区划年份开始
-     */
-    start: number
-    /**
-     * @description 行政区划年份结束 为空则表示至今
-     */
-    end?: number
-  }
+  year: number[]
 }
 
 interface AdvancedItem extends BasicItem {

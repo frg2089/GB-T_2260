@@ -18,14 +18,12 @@ const parse = (db: DB, nodes: Node[], year: number) => {
         name: node.name,
         type: node.type,
         level: node.level,
-        year: { start: Number(year) },
+        year: [year],
       } satisfies AdvancedItem)
     } else {
-      item.year.start = Math.min(
-        year,
-        item.year.start ?? Number.MAX_SAFE_INTEGER,
-      )
-      item.year.end = Math.max(year, item.year.end ?? 0)
+      if (!item.year.includes(year)) {
+        item.year.push(year)
+      }
     }
 
     if (node.children && node.children?.length) parse(db, node.children, year)

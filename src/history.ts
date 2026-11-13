@@ -55,14 +55,12 @@ export const getHistory = async (db: DB) => {
       if (!item) {
         db[code].push({
           name,
-          year: { start: Number(year) },
+          year: [year],
         } satisfies BasicItem)
       } else {
-        item.year.start = Math.min(
-          year,
-          item.year.start ?? Number.MAX_SAFE_INTEGER,
-        )
-        item.year.end = Math.max(year, item.year.end ?? 0)
+        if (!item.year.includes(year)) {
+          item.year.push(year)
+        }
       }
     })
   })
