@@ -23,49 +23,102 @@ pnpm add gb-t_2260
 ```jsonc
 {
   // 省级：北京市
-  "110000000000": [{ "name": "北京市", "type": "直辖市", "level": 1, "year": { "start": 1980 } }],
+  "110000000000": [
+    {
+      "name": "北京市",
+      "type": "直辖市",
+      "level": 1,
+      "year": { "start": 1980 },
+    },
+  ],
   // 县级：东城区
-  "110101000000": [{ "name": "东城区", "type": "市辖区", "level": 3, "year": { "start": 1980 } }],
+  "110101000000": [
+    {
+      "name": "东城区",
+      "type": "市辖区",
+      "level": 3,
+      "year": { "start": 1980 },
+    },
+  ],
   // 2012 年新设立的地级市
-  "460300000000": [{ "name": "三沙市", "type": "地级市", "level": 2, "year": { "start": 2012 } }],
+  "460300000000": [
+    {
+      "name": "三沙市",
+      "type": "地级市",
+      "level": 2,
+      "year": { "start": 2012 },
+    },
+  ],
   // 已撤销的代码：end 为最后存在的年份
-  "500105000000": [{ "name": "江北区", "type": "市辖区", "level": 3, "year": { "start": 1980, "end": 2024 } }]
+  "500105000000": [
+    {
+      "name": "江北区",
+      "type": "市辖区",
+      "level": 3,
+      "year": { "start": 1980, "end": 2024 },
+    },
+  ],
 }
 ```
 
-| 字段 | 说明 |
-| --- | --- |
-| `name` | 行政区划名称 |
-| `type` | 行政区划类型，见下方 `Type` |
-| `level` | 行政区划级别：`0` 根节点、`1` 省级、`2` 地级、`3` 县级 |
-| `year.start` | 该状态的起始年份 |
-| `year.end` | 该状态的结束年份；**省略表示截至数据最新年份仍然有效** |
+| 字段         | 说明                                                   |
+| ------------ | ------------------------------------------------------ |
+| `name`       | 行政区划名称                                           |
+| `type`       | 行政区划类型，见下方 `Type`                            |
+| `level`      | 行政区划级别：`0` 根节点、`1` 省级、`2` 地级、`3` 县级 |
+| `year.start` | 该状态的起始年份                                       |
+| `year.end`   | 该状态的结束年份；**省略表示截至数据最新年份仍然有效** |
 
 ```ts
-/** 行政区划类型 */
+/**
+ * @description 行政区划类型
+ */
 type Type =
-  | '地级市' | '地区' | '林区' | '盟'
-  | '省' | '市辖区' | '特别行政区'
-  | '县' | '县级市' | '直辖市'
-  | '自治区' | '自治县' | '自治州'
+  | '地级市'
+  | '地区'
+  | '林区'
+  | '盟'
+  | '省'
+  | '市辖区'
+  | '特别行政区'
+  | '县'
+  | '县级市'
+  | '直辖市'
+  | '自治区'
+  | '自治县'
+  | '自治州'
 
 interface Item {
-  /** 行政区划名称 */
+  /**
+   * @description 行政区划名称
+   */
   name: string
-  /** 行政区划类型 */
+  /**
+   * @description 行政区划类型
+   */
   type: Type
-  /** 行政区划级别 */
+  /**
+   * @description 行政区划级别
+   */
   level: number
-  /** 行政区划年份范围 */
+  /**
+   * @description 行政区划年份范围
+   */
   year: {
-    /** 行政区划年份开始 */
+    /**
+     * @description 行政区划年份开始
+     */
     start: number
-    /** 行政区划年份结束 为空则表示至今 */
+    /**
+     * @description 行政区划年份结束 为空则表示至今
+     */
     end?: number
   }
 }
 
-/** 12位行政区划代码 */
+/**
+ * @description 12位行政区划代码
+ */
 type Code = string
 
 declare const db: Record<Code, Item[]>
@@ -97,12 +150,16 @@ const counties = Object.entries(db)
 ```ts
 import db, { type Item } from 'gb-t_2260'
 
-/** 判断代码在指定年份是否有效 */
+/**
+ * @description 判断代码在指定年份是否有效
+ */
 function isValid(code: string, year: number): boolean {
-  return db[code]?.some((item: Item) => {
-    const end = item.year.end ?? Infinity
-    return item.year.start <= year && year <= end
-  }) ?? false
+  return (
+    db[code]?.some((item: Item) => {
+      const end = item.year.end ?? Infinity
+      return item.year.start <= year && year <= end
+    }) ?? false
+  )
 }
 
 // 三沙市于 2012 年设立
@@ -118,13 +175,13 @@ import db from 'gb-t_2260/db.json'
 
 ## 数据来源
 
-| 项目 | 值 |
-| --- | --- |
-| 数据源 | [中国·国家地名信息库 · 行政区划](https://dmfw.mca.gov.cn/9095/xzqh/getList?year=2025) |
-| 覆盖年份 | 1980 – 2025（46 个年份，无缺失） |
-| 原始格式 | 每年一个 JSON，`data` 字段为树形节点（`code` / `name` / `level` / `type` / `children`） |
-| 当前条目 | 488 条代码（`level` 0–3，含 34 个省级单位） |
-| 规范 | [GB/T 2260](https://openstd.samr.gov.cn/bzgk/gb/newGbInfo?hcno=E107EA4DE9725EDF819F33C60A44B296) |
+| 项目     | 值                                                                                               |
+| -------- | ------------------------------------------------------------------------------------------------ |
+| 数据源   | [中国·国家地名信息库 · 行政区划](https://dmfw.mca.gov.cn/9095/xzqh/getList?year=2025)            |
+| 覆盖年份 | 1980 – 2025（46 个年份，无缺失）                                                                 |
+| 原始格式 | 每年一个 JSON，`data` 字段为树形节点（`code` / `name` / `level` / `type` / `children`）          |
+| 当前条目 | 488 条代码（`level` 0–3，含 34 个省级单位）                                                      |
+| 规范     | [GB/T 2260](https://openstd.samr.gov.cn/bzgk/gb/newGbInfo?hcno=E107EA4DE9725EDF819F33C60A44B296) |
 
 `db.json` 的生成规则（见 [Build-McaAdminDivisionDatabase.ps1](./scripts/Build-McaAdminDivisionDatabase.ps1)）：
 

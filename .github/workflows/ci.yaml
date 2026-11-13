@@ -3,7 +3,7 @@ name: CI
 on:
   schedule:
     # 每年二月一号执行 北京时间
-    - cron: "0 16 1 2 *"
+    - cron: '0 16 1 2 *'
   workflow_dispatch:
 
 concurrency:
@@ -30,39 +30,19 @@ jobs:
       - name: 设置 Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: "24"
-          registry-url: "https://registry.npmjs.org"
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
           package-manager-cache: false
 
-      - name: 获取年份
-        id: get-year
-        run: |
-          $year = (Get-Date).Year - 1
-          Write-Output "当前年份: $year"
-          Write-Output "CURRENT_YEAR=$year" >> $env:GITHUB_OUTPUT
-
-      - name: 获取数据
-        run: ./scripts/Get-McaAdminDivisionCodes.ps1 -StartYear 1980 -EndYear ${{ steps.get-year.outputs.CURRENT_YEAR }} -Interval ([timespan]::FromMicroseconds(500))
-
-      - name: 构建数据集
-        run: ./scripts/Build-McaAdminDivisionDatabase.ps1
-
-      - name: 修改 package.json
-        run: |
-          $json = Get-Content package.json -Raw | ConvertFrom-Json
-          $json.version = "0.${{ steps.get-year.outputs.CURRENT_YEAR }}.0"
-          $json | ConvertTo-Json -Depth 100 | Set-Content package.json
-
-      - name: 打包
-        run: pnpm pack
+      - run: pnpm install
+      - run: pnpm build
+      - run: pnpm pack
+      - run: pnpm stage publish --access public
 
       - name: 收集 npm 包
         uses: actions/upload-artifact@v7
         with:
           name: npm-packages
-          path: "*.tgz"
+          path: '*.tgz'
           if-no-files-found: error
           retention-days: 3
-
-      - name: 推送 npm 包
-        run: pnpm publish *.tgz --access public

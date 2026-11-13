@@ -1,20 +1,26 @@
 {
   "name": "@frg2089/gb-t_2260",
-  "version": "0.2025.0",
+  "version": "0.2025.1",
   "description": "县及县以上行政区划代码（GB/T 2260）",
   "keywords": [
+    "administrative-divisions",
+    "china",
     "gb/t 2260",
     "gb2260",
-    "行政区划代码",
-    "administrative-divisions",
-    "china"
+    "行政区划代码"
   ],
-  "author": "frg2089",
   "license": "(MIT AND CC-BY-4.0)",
+  "author": "frg2089",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/frg2089/GB-T_2260.git"
   },
+  "files": [
+    "db.json",
+    "type.d.ts"
+  ],
+  "type": "module",
+  "sideEffects": false,
   "main": "./db.json",
   "types": "./type.d.ts",
   "exports": {
@@ -22,14 +28,18 @@
       "types": "./type.d.ts",
       "default": "./db.json"
     },
-    "./db.json": "./db.json",
     "./package.json": "./package.json"
   },
-  "files": [
-    "db.json",
-    "type.d.ts"
-  ],
-  "sideEffects": false,
+  "scripts": {
+    "fmt": "oxfmt",
+    "build": "node ./src/index.ts"
+  },
+  "devDependencies": {
+    "@types/jsdom": "^30.0.0",
+    "@types/node": "^26.6.6",
+    "jsdom": "^31.0.0",
+    "oxfmt": "^0.78.0"
+  },
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
