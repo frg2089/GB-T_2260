@@ -1,0 +1,33 @@
+{
+  "name": "gb-t_2260",
+  "version": "0.2025.0",
+  "description": "县及县以上行政区划代码（GB/T 2260）",
+  "keywords": [
+    "gb/t 2260",
+    "gb2260",
+    "行政区划代码",
+    "administrative-divisions",
+    "china"
+  ],
+  "author": "frg2089",
+  "license": "(MIT AND CC-BY-4.0)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/frg2089/GB-T_2260.git"
+  },
+  "main": "./db.json",
+  "types": "./type.d.ts",
+  "exports": {
+    ".": {
+      "types": "./type.d.ts",
+      "default": "./db.json"
+    },
+    "./db.json": "./db.json",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "db.json",
+    "type.d.ts"
+  ],
+  "sideEffects": false
+}
