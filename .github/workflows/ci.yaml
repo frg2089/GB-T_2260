@@ -37,9 +37,9 @@ jobs:
       - name: 获取年份
         id: get-year
         run: |
-          $year = (Get-Date).Year
+          $year = (Get-Date).Year - 1
           Write-Output "当前年份: $year"
-          echo "CURRENT_YEAR=$year" >> $GITHUB_OUTPUT
+          Write-Output "CURRENT_YEAR=$year" >> $env:GITHUB_OUTPUT
 
       - name: 获取数据
         run: ./scripts/Get-McaAdminDivisionCodes.ps1 -StartYear 1980 -EndYear ${{ steps.get-year.outputs.CURRENT_YEAR }} -Interval ([timespan]::FromMicroseconds(500))
