@@ -29,5 +29,17 @@
     "db.json",
     "type.d.ts"
   ],
-  "sideEffects": false
+  "sideEffects": false,
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": ">=12.8.1",
+      "onFail": "error"
+    },
+    "runtime": {
+      "name": "node",
+      "version": ">=24.15.0",
+      "onFail": "error"
+    }
+  }
 }
