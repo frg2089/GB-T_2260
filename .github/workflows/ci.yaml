@@ -1,0 +1,90 @@
+name: CI
+
+on:
+  schedule:
+    # 每年二月一号执行 北京时间
+    - cron: "0 16 1 2 *"
+  workflow_dispatch:
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: 设置 pnpm
+        uses: pnpm/setup@v3
+
+      - name: 获取年份
+        id: get-year
+        run: |
+          $year = (Get-Date).Year
+          Write-Output "当前年份: $year"
+          echo "CURRENT_YEAR=$year" >> $GITHUB_OUTPUT
+
+      - name: 获取数据
+        run: ./scripts/Get-McaAdminDivisionCodes.ps1 -StartYear 1980 -EndYear ${{ steps.get-year.outputs.CURRENT_YEAR }} -Interval ([timespan]::FromMicroseconds(500))
+
+      - name: 构建数据集
+        run: ./scripts/Build-McaAdminDivisionDatabase.ps1
+
+      - name: 修改 package.json
+        run: |
+          $json = Get-Content package.json -Raw | ConvertFrom-Json
+          $json.version = "0.${{ steps.get-year.outputs.CURRENT_YEAR }}.0"
+          $json | ConvertTo-Json -Depth 100 | Set-Content package.json
+
+      - name: 打包
+        run: pnpm pack
+
+      - name: 收集 npm 包
+        uses: actions/upload-artifact@v7
+        with:
+          name: npm-packages
+          path: "*.tgz"
+          if-no-files-found: error
+          retention-days: 3
+
+  release:
+    needs: build
+    name: 发布
+    if: startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: write
+      id-token: write # Required for OIDC
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 签出仓库
+        uses: actions/checkout@v7
+        with:
+          sparse-checkout: "."
+
+      - name: 设置 pnpm
+        uses: pnpm/setup@v3
+
+      - name: 下载构建产物
+        uses: actions/download-artifact@v8
+        with:
+          name: npm-packages
+          path: "."
+
+      - name: Release
+        uses: softprops/action-gh-release@v3
+        with:
+          files: |
+            *.tgz
+          generate_release_notes: true
+          prerelease: ${{ contains(github.ref, '-') }}
+
+      - name: 推送 npm 包
+        run: pnpm publish *.tgz --access public
