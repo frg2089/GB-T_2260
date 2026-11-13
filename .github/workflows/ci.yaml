@@ -1,9 +1,9 @@
 name: CI
 
 on:
-  schedule:
-    # 每年二月一号执行 北京时间
-    - cron: '0 16 1 2 *'
+  # schedule:
+  #   # 每年二月一号执行 北京时间
+  #   - cron: '0 16 1 2 *'
   workflow_dispatch:
 
 concurrency:
